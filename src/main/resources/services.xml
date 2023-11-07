@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <!-- services -->
+    <bean id="petStore" class="org.example.services.PetStoreServiceImpl">
+        <property name="accountDao" ref="accountDao"/>
+        <property name="itemDao" ref="itemDao"/>
+    </bean>
+    <alias name="petStore" alias="animalStore"/>
+    <bean id="clientService" class="org.example.services.ClientService" factory-method="createInstance">
+    </bean>
+    <bean id="serviceLocator" class="org.example.services.DefaultServiceLocator"></bean>
+    <bean id="accountService" factory-bean="serviceLocator" factory-method="createAccountServiceInstance"></bean>
+    <bean id="beanOne" class="org.example.modules.ThingOne">
+        <constructor-arg>
+            <ref bean="beanTwo"/>
+        </constructor-arg>
+        <constructor-arg ref="beanThree"/>
+    </bean>
+    <bean id="beanTwo" class="org.example.modules.ThingTwo"/>
+    <bean id="beanThree" class="org.example.modules.ThingThree"/>
+    <bean id="exampleBean" class="org.example.modules.ExampleBean">
+        <!-- can be either type or name or index -->
+        <constructor-arg type="int" name="years" index="0" value="75000"/>
+        <constructor-arg type="java.lang.String" name="ultimateAnswer" index="1" value="42"/>
+    </bean>
+    <bean id="movieFinder" class="org.example.modules.MovieFinder"/>
+    <bean id="simpleMovieListerV2" class="org.example.modules.SimpleMovieListerV2">
+        <property name="movieFinder">
+            <ref bean="movieFinder"/>
+        </property>
+        <!-- <property name="movieFinder" ref="movieFinder/> -->
+    </bean>
+    <bean id="exampleBeanV2" class="org.example.modules.ExampleBeanV2" factory-method="createInstance">
+        <constructor-arg ref="exampleBean"/>
+    </bean>
+</beans>
