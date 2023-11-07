@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd">
     <!-- services -->
@@ -11,8 +12,8 @@
     <alias name="petStore" alias="animalStore"/>
     <bean id="clientService" class="org.example.services.ClientService" factory-method="createInstance">
     </bean>
-    <bean id="serviceLocator" class="org.example.services.DefaultServiceLocator"></bean>
-    <bean id="accountService" factory-bean="serviceLocator" factory-method="createAccountServiceInstance"></bean>
+    <bean id="serviceLocator" class="org.example.services.DefaultServiceLocator"/>
+    <bean id="accountService" factory-bean="serviceLocator" factory-method="createAccountServiceInstance"/>
     <bean id="beanOne" class="org.example.modules.ThingOne">
         <constructor-arg>
             <ref bean="beanTwo"/>
@@ -36,4 +37,43 @@
     <bean id="exampleBeanV2" class="org.example.modules.ExampleBeanV2" factory-method="createInstance">
         <constructor-arg ref="exampleBean"/>
     </bean>
+
+    <bean id="myDataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+        <property name="url" value="jdbc:mysql://localhost:3306/mydb"/>
+        <property name="username" value="root"/>
+        <property name="password" value="testpwd"/>
+    </bean>
+    <!-- the above declaration is equivalent to the below one -->
+    <bean id="myDataSource" class="org.apache.commons.dbcp.BasicDataSource"
+          destroy-method="close"
+          p:driverClassName="com.mysql.jdbc.Driver"
+          p:url="jdbc:mysql://localhost:3306/mydb"
+          p:username="root"
+          p:password="testpwd"
+    />
+
+    <bean id="mappings" class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer">
+        <property name="properties">
+            <value>
+                jdbc.driver.className=com.mysql.jdbc.Driver
+                jdbc.url=jdbc:mysql://localhost:3306/mydb
+            </value>
+        </property>
+    </bean>
+
+    <bean id="theTargetBean" class="org.example.modules.TheTargetBean"/>
+
+    <bean id="theClientBean" class="org.example.modules.TheClientBean">
+        <property name="targetName">
+            <idref bean="theTargetBean"/>
+        </property>
+    </bean>
+    <!-- the above declaration is equivalent to the below one -->
+    <bean id="theClientBean" class="org.example.modules.TheClientBean">
+        <property name="targetName" value="theTargetBean"/>
+    </bean>
+
+
+
 </beans>
